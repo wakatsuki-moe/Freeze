@@ -117,7 +117,7 @@
 
 	* 棋譜
 
-
+``` raw
 #KIF version=2.0 encoding=UTF-8
 # ---- Kifu for Windows V7 V7.41 棋譜ファイル ----
 開始日時：2019/05/29(水)
@@ -219,4 +219,5 @@
 
 
 		*
+'''
 sfen は上記参照を
