@@ -1,115 +1,82 @@
 # Freeze将棋拡張 案
 * 2020-11-29：初版
 * 2020-12-02：改定
+* 2020-12-22: 改定
 
+## 基本;^^
 * 「F or f」は既にsfenである(6筋)ので　「Z or z」 ;^^
-
   * sfen拡張
-
     * 基本 lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1
-
       * 最後に付加
       * 残り回数  zxxZxx
-
         * lnsgkg略sSNL b - 1  z3Z3
         * z 先手残り回数     Z 後手残り回数
         * 無ければ 先後共に0回 考慮しない(通常)
-
       * 局面
-
         * Freeze局面なら付随
-
           * した zx (xは駒種)
           * lnsgkg…sSNL b - 1 zG z2Z3
-
             * コノ局面でフリーズ金 先手２回、後手３回
-
-        * フリーズされた局面なら付随(いらない？ 要る?)
-
+        * フリーズされた局面なら付随(オプション?)
           * された Zx(xは駒種)
           * lnsgkg…sSNL w - 1 ZG z3Z2
-
             * フリーズ金された局面から 先手3回後手2回
 
-* USI拡張
+## USI拡張
+  FREEZE (NONE | ALLOW_FREEZE | CAN_FREEZE | OK)
+  FREEZENUM zNZN (FREEZE OK 以外は無視)
 
   * FREEZE オプション
-
-    * NONE (デフォルト?)
-
+    * NONE (デフォルト)
       * フリーズ将棋 受け入れない
 
-    * ALLOW_FREEZE (いらない？ 要る?)
-
+    * ALLOW_FREEZE
       * AIは、フリーズ将棋は受け入れる(がAIからはフリーズの指し手に含めない)
 
-    * CAN_FREEZE (いらない？ 要る?)
-
+    * CAN_FREEZE
       * AIは、フリーズ将棋の指し手を指す(が相手からのフリーズの指し手を受け入れない)
 
     * OK
-
       * ALLOW_FREEZE かつ  CAN_FREEZE(フリーズ将棋は受け入れ、かつ、フリーズ将棋の指し手を指す)
+    * FREEZENUM zNZM
+       * 先手zN回数後手ZM回数
+       * 指定無けれは デフォルト先後 3回づつ
 
-        * FREEZENUM zNZN
+## 指し手
 
-          * 先手回数後手回数(zNZN デフォルト先後3回づつ)
-
-  * 指し手
-
-    * 基本１ position startpos
-    * 基本２ position sfen xxxxxxxxxx moves xx zG ・・・ z3Z3
+ * 基本１ position startpos
+ *  基本２ position sfen xxxxxxxxxx moves xx zG ・・・ z3Z3
     * 残り回数  zxxZxx
-
       * position startpos z3Z3
       * position startpos moves xx ・・・ z3Z3
-      * z 先手残り回数     Z 後手残り回数
-      * 無ければ 先後共に0回 考慮しない(通常)
+        * z 先手残り回数     Z 後手残り回数
+        * 無ければ 先後共に0回 考慮しない(通常)
 
-    * 基本 7g7f
+* 基本 7g7f
+  * 7g7fzG
+    * 7g7f 移動で金をフリーズ
+  * 7g7fZG (オプション)
+    *  金がフリーズの局面で思考し、指し手7g7f
+  * info で表示するか bestmoveで示すか pv等で示すか
+      * info
+        * info depth 1 seldepth 1 score cp 6055 nodes 137 nps 10538 time 13 pv ・・・5c6czG
+          * 読みで 5c6c移動で金をフリーズ
+        * info depth 1 seldepth 1 score cp 6055 nodes 137 nps 10538 time 13 pv ・・・ 5c6czG  ・・
+          * 読みでの途中で 5c6c移動で金をフリーズ
+        * info depth 1 seldepth 1 score cp 6055 nodes 137 nps 10538 time 13 pv ・・・ 5c6cZG  ・・
+          *  読みでの途中で 金がフリーズの局面で思考し 5c6c移動 (オプション)
 
-      * 7g7fzG
-
-        * 7g7f 移動で金をフリーズ
-
-      * 7g7fZG (いらない？ 要る?)
-
-        * 金がフリーズの局面で思考し、指し手7g7f
-
-    * info で表示するか bestmoveで示すか pv等で示すか
-
-         * info
-            * info depth 1 seldepth 1 score cp 6055 nodes 137 nps 10538 time 13 pv ・・・5c6czG
-
-              * 読みで 5c6c移動で金をフリーズ
-
-            * info depth 1 seldepth 1 score cp 6055 nodes 137 nps 10538 time 13 pv ・・・ 5c6czG ・・・
-
-              * 読みでの途中で 5c6c移動で金をフリーズ
-
-
-            * info depth 1 seldepth 1 score cp 6055 nodes 137 nps 10538 time 13 pv ・・・ 5c6cZG ・・・
-
-              * 読みでの途中で 金がフリーズの局面で思考し 5c6c移動 (いらない？ 要る?)
-
-      * bestmove
-
+    * bestmove
         * bestmove 5c6czG
-
-          * 金をフリーズで5c6c移動
-
+          * 金をフリーズ で 5c6c移動
         * bestmove 5c6czG ponder xxxx
-
-          * 5c6c移動で金をフリーズ で XXXを先読み
-
+          * 金をフリーズ で 5c6c移動de で XXXを先読み
         * bestmove 5c6c ponder xxxxzG
-
-          * 5c6c移動で先読みで xxxx移動で 金をフリーズ
-
-        * bestmove 5c6cZG (いらない？ 要る?)
-
+          * 5c6c移動 で 先読みで xxxx移動で 金をフリーズ
+        * bestmove 5c6cZG (オプション)
           * 金がフリーズの局面で、指し手 5c6c移動
 
+---
 
 * 棋譜
 
@@ -117,6 +84,7 @@
 
     * ダメ＞＜ 現状、将棋神 でだと、コメントは読み込むけど、表示せず、保存するとコメントは全て消えちゃう><
     * どうしようか；
+      * なんとかする;^^
 
   * ※ 当面はkif/kifu( か、ki2/ki2u) 形式  sfen(USI)形式 のみ ^^;
 
@@ -156,11 +124,6 @@
 *Z金 先手3回 後手2回 (←被フリーズ コメント扱い 他のGUIでも読める)
 ・・・
 
-・・・案２
-50 同　馬(24)  ( 0:00/00:00:00)
-#z金 先手3回 後手2回  (←フリーズ 棋譜ファイル自体のコメント扱い 他のGUIでも読める けど完全に無視される;^^)
-51 ３七桂(29) ( 0:00/00:00:00)
-#Z金 先手3回 後手2回  (←被フリーズ棋譜ファイル自体のコメント扱い 他のGUIでも読めるけど完全に無視される;^^)
 
 ・・・  案３
 63 同　金(48)   (0:00/00:00:00) (先手3回 後手2回)        (←通常の指し手)
@@ -181,15 +144,6 @@
 *z金 先手3回 後手2回 (←フリーズ コメント扱い    他のGUIでも読める)
 5 ６一金打      (00:00 / 00:00:00)
 *Z金 先手3回 後手2回 (←被フリーズ コメント扱い 他のGUIでも読める)
-・・・
-
-・・・案2b
-変化：4手
-4 同　銀(71)    (00:00 / 00:00:00)
-#z金 先手3回 後手2回  (←フリーズ 棋譜ファイル自体のコメント扱い 他のGUIでも読める   けど完全に無視される;^^)
-5 ６一金打
-#Z金 先手3回 後手2回  (←被フリーズ棋譜ファイル自体のコメント扱い 他のGUIでも読める けど完全に無視される;^^)
-51 ３七桂(29) ( 0:00/00:00:00)
 ・・・
 
 ・・・案3b
