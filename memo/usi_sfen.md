@@ -196,8 +196,6 @@ Freeze将棋 上は3回がルールだけど任意回と致します(例えば�
   * 金をフリーズ で 5c6c移動 で XXXを先読み
 * bestmove 5c6c ponder xxxxzG
   * 5c6c移動 で 先読みで xxxx移動で 金をフリーズ
-* bestmove 5c6czG ponder xxxxzG
-  * 金をフリーズ で 5c6c移動、先読みで xxxx移動で 金をフリーズ
 
 ---
 * bestmove 5c6cZG
